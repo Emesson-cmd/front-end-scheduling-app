@@ -1,6 +1,5 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,7 +29,6 @@ export default function SignUpClient() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
@@ -40,60 +38,8 @@ export default function SignUpClient() {
       return;
     }
 
-    try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo:
-            process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ||
-            `${window.location.origin}/auth/confirm`,
-          data: {
-            full_name: fullName,
-            business_name: businessName,
-            phone: phone,
-            user_type: userType,
-          },
-        },
-      });
-
-      if (authError) throw authError;
-
-      if (authData.user) {
-        // Create profile based on user type
-        if (userType === 'provider') {
-          const { error: providerError } = await supabase
-            .from('providers')
-            .insert({
-              id: authData.user.id,
-              business_name: businessName,
-              business_email: email,
-              phone: phone,
-              address: '',
-              city: '',
-              state: '',
-              zip_code: '',
-            });
-          if (providerError) throw providerError;
-        } else {
-          const { error: customerError } = await supabase
-            .from('customers')
-            .insert({
-              id: authData.user.id,
-              full_name: fullName,
-              email: email,
-              phone: phone,
-            });
-          if (customerError) throw customerError;
-        }
-      }
-    } catch (error: unknown) {
-      console.log('Error signing up:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred');
-      router.push('/auth/sign-up-success');
-    } finally {
-      setIsLoading(false);
-    }
+    router.push('/auth/sign-up-success');
+    setIsLoading(false);
   };
 
   return (

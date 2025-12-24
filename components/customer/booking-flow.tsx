@@ -1,19 +1,28 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import BookingCalendar from "./booking-calendar";
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import BookingCalendar from './booking-calendar';
+import { Appointment } from '@/models/appointment.model';
+import { Provider } from '@/models/provider.model';
+import { Service } from '@/models/service.model';
+import { Availability } from '@/models/availability.model';
 
 interface Props {
-  provider: any;
-  services: any[];
-  availability: any[];
+  provider: Provider;
+  services: Service[];
+  availability: Availability[];
   userId: string;
 }
 
-type Step = "service" | "date-time" | "confirm" | "success";
+type Step = 'success' | 'service' | 'date-time' | 'confirm';
 
 export default function BookingFlow({
   provider,
@@ -21,11 +30,11 @@ export default function BookingFlow({
   availability,
   userId,
 }: Props) {
-  const [step, setStep] = useState<Step>("service");
+  const [step, setStep] = useState<Step>('service');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const service = services.find((s) => s.id === selectedService);
@@ -34,46 +43,38 @@ export default function BookingFlow({
     if (!selectedService || !selectedDate || !selectedTime) return;
 
     setIsSubmitting(true);
-    const supabase = createClient();
 
-    try {
-      const { data: appointmentData, error } = await supabase.from("appointments").insert({
-        customer_id: userId,
-        service_id: selectedService,
-        provider_id: provider.id,
-        appointment_date: selectedDate,
-        appointment_time: selectedTime,
-        notes: notes,
-        status: "confirmed",
-      }).select().single();
+    const appointmentData: Appointment = {
+      id: 1,
+      services: { name: 'Service 1', price: 100 },
+      providers: {
+        business_name: 'Provider 1',
+        address: '123 Main St',
+        city: 'City 1',
+        phone: '123-456-7890',
+      },
+      status: 'confirmed',
+      date: '2023-09-01',
+      time: '10:00 AM',
+      customer: { name: 'John Doe' },
+      appointment_date: '2023-09-01',
+      appointment_time: '10:00 AM',
+    };
 
-      if (error) throw error;
+    setStep('success');
 
-      // Send confirmation emails
-      await fetch('/api/send-booking-confirmation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          appointmentId: appointmentData.id,
-        }),
-      });
-
-      setStep("success");
-    } catch (error) {
-      console.error("Booking error:", error);
-      alert("Failed to create booking");
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsSubmitting(false);
   };
 
-  if (step === "success") {
+  if (step === 'success') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Booking Confirmed!</CardTitle>
-            <CardDescription>Your appointment has been scheduled</CardDescription>
+            <CardDescription>
+              Your appointment has been scheduled
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-green-50 p-4 rounded-lg">
@@ -92,7 +93,8 @@ export default function BookingFlow({
               <div>
                 <p className="text-gray-600">Date & Time</p>
                 <p className="font-medium">
-                  {new Date(selectedDate!).toLocaleDateString()} at {selectedTime}
+                  {new Date(selectedDate!).toLocaleDateString()} at{' '}
+                  {selectedTime}
                 </p>
               </div>
               <div>
@@ -100,7 +102,13 @@ export default function BookingFlow({
                 <p className="font-medium">${service?.price}</p>
               </div>
             </div>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700" href="/customer/appointments">
+            <Button
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              // href="/customer/appointments"
+              onClick={() => {
+                window.location.href = '/customer/appointments';
+              }}
+            >
               View My Appointments
             </Button>
           </CardContent>
@@ -123,20 +131,19 @@ export default function BookingFlow({
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="grid grid-cols-3 gap-2 mb-8">
           {[
-            { id: "service", label: "Select Service" },
-            { id: "date-time", label: "Choose Date & Time" },
-            { id: "confirm", label: "Confirm Booking" },
+            { id: 'service', label: 'Select Service' },
+            { id: 'date-time', label: 'Choose Date & Time' },
+            { id: 'confirm', label: 'Confirm Booking' },
           ].map((s, idx) => (
             <div
               key={s.id}
               className={`p-3 rounded-lg text-center font-medium ${
                 step === s.id
-                  ? "bg-blue-600 text-white"
-                  : step === "success" || 
-                    (step === "confirm" && idx <= 2) ||
-                    (step === "date-time" && idx <= 1)
-                  ? "bg-green-100 text-green-900"
-                  : "bg-gray-200 text-gray-600"
+                  ? 'bg-blue-600 text-white'
+                  : (step === 'confirm' && idx <= 2) ||
+                    (step === 'date-time' && idx <= 1)
+                  ? 'bg-green-100 text-green-900'
+                  : 'bg-gray-200 text-gray-600'
               }`}
             >
               {s.label}
@@ -144,11 +151,13 @@ export default function BookingFlow({
           ))}
         </div>
 
-        {step === "service" && (
+        {step === 'service' && (
           <Card>
             <CardHeader>
               <CardTitle>Select a Service</CardTitle>
-              <CardDescription>Choose the service you want to book</CardDescription>
+              <CardDescription>
+                Choose the service you want to book
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {services.map((service) => (
@@ -157,12 +166,14 @@ export default function BookingFlow({
                   onClick={() => setSelectedService(service.id)}
                   className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                     selectedService === service.id
-                      ? "border-blue-600 bg-blue-50"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? 'border-blue-600 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <h3 className="font-semibold">{service.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{service.description}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {service.description}
+                  </p>
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-sm text-gray-500">
                       {service.duration_minutes} mins
@@ -174,7 +185,7 @@ export default function BookingFlow({
                 </div>
               ))}
               <Button
-                onClick={() => setStep("date-time")}
+                onClick={() => setStep('date-time')}
                 disabled={!selectedService}
                 className="w-full bg-blue-600 hover:bg-blue-700"
               >
@@ -184,7 +195,7 @@ export default function BookingFlow({
           </Card>
         )}
 
-        {step === "date-time" && selectedService && (
+        {step === 'date-time' && selectedService && (
           <BookingCalendar
             service={service}
             availability={availability}
@@ -192,12 +203,12 @@ export default function BookingFlow({
             selectedTime={selectedTime}
             onDateSelect={setSelectedDate}
             onTimeSelect={setSelectedTime}
-            onContinue={() => setStep("confirm")}
-            onBack={() => setStep("service")}
+            onContinue={() => setStep('confirm')}
+            onBack={() => setStep('service')}
           />
         )}
 
-        {step === "confirm" && (
+        {step === 'confirm' && (
           <Card>
             <CardHeader>
               <CardTitle>Confirm Your Booking</CardTitle>
@@ -212,11 +223,11 @@ export default function BookingFlow({
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">Date & Time</p>
                   <p className="font-semibold text-lg">
-                    {new Date(selectedDate!).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}{" "}
+                    {new Date(selectedDate!).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                    })}{' '}
                     at {selectedTime}
                   </p>
                 </div>
@@ -244,7 +255,7 @@ export default function BookingFlow({
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => setStep("date-time")}
+                  onClick={() => setStep('date-time')}
                   className="flex-1"
                 >
                   Back
@@ -254,7 +265,7 @@ export default function BookingFlow({
                   disabled={isSubmitting}
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
-                  {isSubmitting ? "Booking..." : "Confirm Booking"}
+                  {isSubmitting ? 'Booking...' : 'Confirm Booking'}
                 </Button>
               </div>
             </CardContent>

@@ -1,19 +1,26 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { formatDate, formatTime } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { formatDate, formatTime } from '@/lib/utils';
+import { Appointment } from '@/models/appointment.model';
 
 interface Props {
-  appointments: any[];
+  appointments: Appointment[];
 }
 
 export default function CustomerAppointments({ appointments }: Props) {
-  const confirmed = appointments.filter((a) => a.status === "confirmed");
-  const completed = appointments.filter((a) => a.status === "completed");
-  const cancelled = appointments.filter((a) => a.status === "cancelled");
+  const confirmed = appointments.filter((a) => a.status === 'confirmed');
+  const completed = appointments.filter((a) => a.status === 'completed');
+  const cancelled = appointments.filter((a) => a.status === 'cancelled');
 
-  const AppointmentCard = ({ appointment }: { appointment: any }) => (
+  const AppointmentCard = ({ appointment }: { appointment: Appointment }) => (
     <div className="p-4 border rounded-lg hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-3">
         <div>
@@ -26,11 +33,11 @@ export default function CustomerAppointments({ appointments }: Props) {
         </div>
         <span
           className={`px-3 py-1 rounded-full text-xs font-medium ${
-            appointment.status === "confirmed"
-              ? "bg-green-100 text-green-800"
-              : appointment.status === "completed"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-red-100 text-red-800"
+            appointment.status === 'confirmed'
+              ? 'bg-green-100 text-green-800'
+              : appointment.status === 'completed'
+              ? 'bg-blue-100 text-blue-800'
+              : 'bg-red-100 text-red-800'
           }`}
         >
           {appointment.status}
@@ -39,7 +46,8 @@ export default function CustomerAppointments({ appointments }: Props) {
 
       <div className="space-y-2 text-sm mb-4">
         <p className="text-gray-600">
-          📅 {formatDate(appointment.appointment_date)} at {formatTime(appointment.appointment_time)}
+          📅 {formatDate(appointment.appointment_date)} at{' '}
+          {formatTime(appointment.appointment_time)}
         </p>
         {appointment.providers?.address && (
           <p className="text-gray-600">
@@ -53,7 +61,7 @@ export default function CustomerAppointments({ appointments }: Props) {
 
       <div className="pt-3 border-t flex justify-between items-center">
         <span className="font-semibold">${appointment.services?.price}</span>
-        {appointment.status === "confirmed" && (
+        {appointment.status === 'confirmed' && (
           <Button variant="outline" size="sm">
             Reschedule
           </Button>
@@ -82,7 +90,9 @@ export default function CustomerAppointments({ appointments }: Props) {
         <Card>
           <CardHeader>
             <CardTitle>Completed</CardTitle>
-            <CardDescription>{completed.length} completed appointments</CardDescription>
+            <CardDescription>
+              {completed.length} completed appointments
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {completed.map((appointment) => (
@@ -96,7 +106,9 @@ export default function CustomerAppointments({ appointments }: Props) {
         <Card>
           <CardHeader>
             <CardTitle>Cancelled</CardTitle>
-            <CardDescription>{cancelled.length} cancelled appointments</CardDescription>
+            <CardDescription>
+              {cancelled.length} cancelled appointments
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {cancelled.map((appointment) => (

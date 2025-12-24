@@ -1,10 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import Link from 'next/link';
 
 interface Props {
   provider: any;
@@ -12,7 +17,7 @@ interface Props {
 }
 
 export default function ProviderSettings({ provider, userId }: Props) {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState('profile');
   const [formData, setFormData] = useState({
     business_name: provider.business_name,
     phone: provider.phone,
@@ -20,26 +25,19 @@ export default function ProviderSettings({ provider, userId }: Props) {
     city: provider.city,
     state: provider.state,
     zip_code: provider.zip_code,
-    description: provider.description || "",
+    description: provider.description || '',
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const handleSave = async () => {
     setIsSaving(true);
-    setMessage("");
-    const supabase = createClient();
+    setMessage('');
 
     try {
-      const { error } = await supabase
-        .from("providers")
-        .update(formData)
-        .eq("id", userId);
-
-      if (error) throw error;
-      setMessage("Profile updated successfully!");
+      setMessage('Profile updated successfully!');
     } catch (error) {
-      setMessage("Failed to update profile");
+      setMessage('Failed to update profile');
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -50,7 +48,9 @@ export default function ProviderSettings({ provider, userId }: Props) {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-6 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Business Settings</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Business Settings
+          </h1>
         </div>
       </header>
 
@@ -64,12 +64,16 @@ export default function ProviderSettings({ provider, userId }: Props) {
         <Card>
           <CardHeader>
             <CardTitle>Business Information</CardTitle>
-            <CardDescription>Update your business details and contact information</CardDescription>
+            <CardDescription>
+              Update your business details and contact information
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Business Name</label>
+                <label className="block text-sm font-medium mb-2">
+                  Business Name
+                </label>
                 <input
                   type="text"
                   value={formData.business_name}
@@ -91,7 +95,9 @@ export default function ProviderSettings({ provider, userId }: Props) {
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium mb-2">Address</label>
+                <label className="block text-sm font-medium mb-2">
+                  Address
+                </label>
                 <input
                   type="text"
                   value={formData.address}
@@ -124,7 +130,9 @@ export default function ProviderSettings({ provider, userId }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Zip Code</label>
+                <label className="block text-sm font-medium mb-2">
+                  Zip Code
+                </label>
                 <input
                   type="text"
                   value={formData.zip_code}
@@ -135,7 +143,9 @@ export default function ProviderSettings({ provider, userId }: Props) {
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium mb-2">Description</label>
+                <label className="block text-sm font-medium mb-2">
+                  Description
+                </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) =>
@@ -149,11 +159,13 @@ export default function ProviderSettings({ provider, userId }: Props) {
             </div>
 
             {message && (
-              <div className={`p-3 rounded-lg text-sm ${
-                message.includes("success")
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }`}>
+              <div
+                className={`p-3 rounded-lg text-sm ${
+                  message.includes('success')
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
                 {message}
               </div>
             )}
@@ -165,7 +177,7 @@ export default function ProviderSettings({ provider, userId }: Props) {
                 className="bg-blue-600 hover:bg-blue-700"
                 disabled={isSaving}
               >
-                {isSaving ? "Saving..." : "Save Changes"}
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
           </CardContent>

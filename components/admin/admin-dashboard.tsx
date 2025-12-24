@@ -1,7 +1,14 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Appointment } from '@/models/appointment.model';
+import { useState } from 'react';
 
 interface Props {
   stats: {
@@ -12,11 +19,11 @@ interface Props {
     completedAppointments: number;
     revenue: number;
   };
-  recentAppointments: any[];
+  recentAppointments: Appointment[];
 }
 
 export default function AdminDashboard({ stats, recentAppointments }: Props) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,7 +44,9 @@ export default function AdminDashboard({ stats, recentAppointments }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalProviders}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.totalProviders}
+              </p>
             </CardContent>
           </Card>
 
@@ -48,7 +57,9 @@ export default function AdminDashboard({ stats, recentAppointments }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalCustomers}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.totalCustomers}
+              </p>
             </CardContent>
           </Card>
 
@@ -100,8 +111,12 @@ export default function AdminDashboard({ stats, recentAppointments }: Props) {
             <CardContent>
               <p className="text-3xl font-bold text-purple-600">
                 {stats.totalAppointments > 0
-                  ? ((stats.confirmedAppointments / stats.totalAppointments) * 100).toFixed(1)
-                  : 0}%
+                  ? (
+                      (stats.confirmedAppointments / stats.totalAppointments) *
+                      100
+                    ).toFixed(1)
+                  : 0}
+                %
               </p>
             </CardContent>
           </Card>
@@ -111,44 +126,57 @@ export default function AdminDashboard({ stats, recentAppointments }: Props) {
         <Card>
           <CardHeader>
             <CardTitle>Recent Appointments</CardTitle>
-            <CardDescription>Latest 10 bookings on the platform</CardDescription>
+            <CardDescription>
+              Latest 10 bookings on the platform
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b bg-gray-50">
                   <tr>
-                    <th className="px-4 py-2 text-left font-semibold">Customer</th>
-                    <th className="px-4 py-2 text-left font-semibold">Provider</th>
-                    <th className="px-4 py-2 text-left font-semibold">Service</th>
+                    <th className="px-4 py-2 text-left font-semibold">
+                      Customer
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold">
+                      Provider
+                    </th>
+                    <th className="px-4 py-2 text-left font-semibold">
+                      Service
+                    </th>
                     <th className="px-4 py-2 text-left font-semibold">Price</th>
-                    <th className="px-4 py-2 text-left font-semibold">Status</th>
+                    <th className="px-4 py-2 text-left font-semibold">
+                      Status
+                    </th>
                     <th className="px-4 py-2 text-left font-semibold">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentAppointments.map((appointment) => (
-                    <tr key={appointment.id} className="border-b hover:bg-gray-50">
+                    <tr
+                      key={appointment.id}
+                      className="border-b hover:bg-gray-50"
+                    >
                       <td className="px-4 py-3">
-                        {appointment.customers?.full_name || "N/A"}
+                        {appointment.customers?.full_name || 'N/A'}
                       </td>
                       <td className="px-4 py-3">
-                        {appointment.providers?.business_name || "N/A"}
+                        {appointment.providers?.business_name || 'N/A'}
                       </td>
                       <td className="px-4 py-3">
-                        {appointment.services?.name || "N/A"}
+                        {appointment.services?.name || 'N/A'}
                       </td>
                       <td className="px-4 py-3">
-                        ${appointment.services?.price || "0.00"}
+                        ${appointment.services?.price || '0.00'}
                       </td>
                       <td className="px-4 py-3">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            appointment.status === "confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : appointment.status === "completed"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
+                            appointment.status === 'confirmed'
+                              ? 'bg-green-100 text-green-800'
+                              : appointment.status === 'completed'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-gray-100 text-gray-800'
                           }`}
                         >
                           {appointment.status}

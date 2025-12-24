@@ -1,42 +1,43 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 interface Props {
   services: any[];
   providerId: string;
 }
 
-export default function ServiceManagement({ services: initialServices, providerId }: Props) {
+export default function ServiceManagement({
+  services: initialServices,
+  providerId,
+}: Props) {
   const [services, setServices] = useState(initialServices);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     duration_minutes: 60,
-    price: "",
+    price: '',
   });
 
   const handleAddService = async () => {
     if (!formData.name || !formData.price) return;
 
-    const supabase = createClient();
-    const { data, error } = await supabase.from("services").insert({
-      provider_id: providerId,
-      name: formData.name,
-      description: formData.description,
-      duration_minutes: formData.duration_minutes,
-      price: parseFloat(formData.price),
+    setFormData({
+      name: '',
+      description: '',
+      duration_minutes: 60,
+      price: '',
     });
-
-    if (!error) {
-      setServices([...services, data[0]]);
-      setFormData({ name: "", description: "", duration_minutes: 60, price: "" });
-      setIsAdding(false);
-    }
+    setIsAdding(false);
   };
 
   return (
@@ -73,7 +74,9 @@ export default function ServiceManagement({ services: initialServices, providerI
           {isAdding && (
             <div className="p-4 border rounded-lg bg-gray-50 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Service Name</label>
+                <label className="block text-sm font-medium mb-1">
+                  Service Name
+                </label>
                 <input
                   type="text"
                   value={formData.name}
@@ -85,7 +88,9 @@ export default function ServiceManagement({ services: initialServices, providerI
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) =>
@@ -114,7 +119,9 @@ export default function ServiceManagement({ services: initialServices, providerI
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Price ($)
+                  </label>
                   <input
                     type="number"
                     value={formData.price}
@@ -133,10 +140,10 @@ export default function ServiceManagement({ services: initialServices, providerI
                   onClick={() => {
                     setIsAdding(false);
                     setFormData({
-                      name: "",
-                      description: "",
+                      name: '',
+                      description: '',
                       duration_minutes: 60,
-                      price: "",
+                      price: '',
                     });
                   }}
                 >

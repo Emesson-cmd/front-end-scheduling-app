@@ -1,21 +1,40 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DAYS_OF_WEEK = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
 
 interface Props {
   providerId: string;
 }
 
 export default function AvailabilityManagement({ providerId }: Props) {
-  const [availability, setAvailability] = useState<Record<number, { start: string; end: string; available: boolean }>>({});
+  const [availability, setAvailability] = useState<
+    Record<number, { start: string; end: string; available: boolean }>
+  >({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleAvailabilityChange = (dayIndex: number, field: string, value: any) => {
+  const handleAvailabilityChange = (
+    dayIndex: number,
+    field: string,
+    value: any
+  ) => {
     setAvailability((prev) => ({
       ...prev,
       [dayIndex]: {
@@ -27,11 +46,9 @@ export default function AvailabilityManagement({ providerId }: Props) {
 
   const handleSave = async () => {
     setIsSaving(true);
-    const supabase = createClient();
 
     try {
       // Delete existing availability
-      await supabase.from("availability").delete().eq("provider_id", providerId);
 
       // Insert new availability
       const records = Object.entries(availability)
@@ -43,12 +60,8 @@ export default function AvailabilityManagement({ providerId }: Props) {
           end_time: data.end,
           is_available: true,
         }));
-
-      if (records.length > 0) {
-        await supabase.from("availability").insert(records);
-      }
     } catch (error) {
-      console.error("Error saving availability:", error);
+      console.error('Error saving availability:', error);
     } finally {
       setIsSaving(false);
     }
@@ -58,7 +71,9 @@ export default function AvailabilityManagement({ providerId }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>Working Hours</CardTitle>
-        <CardDescription>Set your availability for each day of the week</CardDescription>
+        <CardDescription>
+          Set your availability for each day of the week
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -70,7 +85,11 @@ export default function AvailabilityManagement({ providerId }: Props) {
                   type="checkbox"
                   checked={availability[index]?.available ?? true}
                   onChange={(e) =>
-                    handleAvailabilityChange(index, "available", e.target.checked)
+                    handleAvailabilityChange(
+                      index,
+                      'available',
+                      e.target.checked
+                    )
                   }
                   className="w-4 h-4 rounded"
                 />
@@ -83,9 +102,9 @@ export default function AvailabilityManagement({ providerId }: Props) {
                     </label>
                     <input
                       type="time"
-                      value={availability[index]?.start ?? "09:00"}
+                      value={availability[index]?.start ?? '09:00'}
                       onChange={(e) =>
-                        handleAvailabilityChange(index, "start", e.target.value)
+                        handleAvailabilityChange(index, 'start', e.target.value)
                       }
                       className="w-full px-3 py-2 border rounded-lg"
                     />
@@ -96,9 +115,9 @@ export default function AvailabilityManagement({ providerId }: Props) {
                     </label>
                     <input
                       type="time"
-                      value={availability[index]?.end ?? "17:00"}
+                      value={availability[index]?.end ?? '17:00'}
                       onChange={(e) =>
-                        handleAvailabilityChange(index, "end", e.target.value)
+                        handleAvailabilityChange(index, 'end', e.target.value)
                       }
                       className="w-full px-3 py-2 border rounded-lg"
                     />
@@ -114,7 +133,7 @@ export default function AvailabilityManagement({ providerId }: Props) {
               className="bg-blue-600 hover:bg-blue-700"
               disabled={isSaving}
             >
-              {isSaving ? "Saving..." : "Save Availability"}
+              {isSaving ? 'Saving...' : 'Save Availability'}
             </Button>
           </div>
         </div>

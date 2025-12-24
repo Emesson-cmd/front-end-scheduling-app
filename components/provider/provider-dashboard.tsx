@@ -1,30 +1,46 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import ServiceManagement from "./service-management";
-import AvailabilityManagement from "./availability-management";
-import AppointmentsList from "./appointments-list";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import ServiceManagement from './service-management';
+import AvailabilityManagement from './availability-management';
+import AppointmentsList from './appointments-list';
+import { Provider } from '@/models/provider.model';
+import { Service } from '@/models/service.model';
+import { Appointment } from '@/models/appointment.model';
 
-type TabType = "appointments" | "services" | "availability" | "profile";
+type TabType = 'appointments' | 'services' | 'availability' | 'profile';
 
 interface Props {
-  provider: any;
-  services: any[];
-  appointments: any[];
+  provider: Provider;
+  services: Service[];
+  appointments: Appointment[];
   userId: string;
 }
 
-export default function ProviderDashboard({ provider, services, appointments, userId }: Props) {
-  const [activeTab, setActiveTab] = useState<TabType>("appointments");
+export default function ProviderDashboard({
+  provider,
+  services,
+  appointments,
+  userId,
+}: Props) {
+  const [activeTab, setActiveTab] = useState<TabType>('appointments');
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Provider Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Provider Dashboard
+          </h1>
           <p className="text-gray-600 mt-1">{provider.business_name}</p>
         </div>
       </header>
@@ -33,18 +49,18 @@ export default function ProviderDashboard({ provider, services, appointments, us
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="flex gap-2 mb-6 border-b">
           {[
-            { id: "appointments", label: "Appointments" },
-            { id: "services", label: "Services" },
-            { id: "availability", label: "Availability" },
-            { id: "profile", label: "Profile" },
+            { id: 'appointments', label: 'Appointments' },
+            { id: 'services', label: 'Services' },
+            { id: 'availability', label: 'Availability' },
+            { id: 'profile', label: 'Profile' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as TabType)}
               className={`px-4 py-2 font-medium border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-600 hover:text-gray-900"
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               {tab.label}
@@ -54,16 +70,16 @@ export default function ProviderDashboard({ provider, services, appointments, us
 
         {/* Tab Content */}
         <div>
-          {activeTab === "appointments" && (
+          {activeTab === 'appointments' && (
             <AppointmentsList appointments={appointments} />
           )}
-          {activeTab === "services" && (
+          {activeTab === 'services' && (
             <ServiceManagement services={services} providerId={userId} />
           )}
-          {activeTab === "availability" && (
+          {activeTab === 'availability' && (
             <AvailabilityManagement providerId={userId} />
           )}
-          {activeTab === "profile" && (
+          {activeTab === 'profile' && (
             <ProfileSettings provider={provider} providerId={userId} />
           )}
         </div>
@@ -72,7 +88,13 @@ export default function ProviderDashboard({ provider, services, appointments, us
   );
 }
 
-function ProfileSettings({ provider, providerId }: { provider: any; providerId: string }) {
+function ProfileSettings({
+  provider,
+  providerId,
+}: {
+  provider: any;
+  providerId: string;
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     business_name: provider.business_name,
@@ -81,7 +103,7 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
     city: provider.city,
     state: provider.state,
     zip_code: provider.zip_code,
-    description: provider.description || "",
+    description: provider.description || '',
   });
 
   return (
@@ -94,7 +116,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Business Name</label>
+              <label className="block text-sm font-medium mb-1">
+                Business Name
+              </label>
               <input
                 type="text"
                 value={formData.business_name}
@@ -110,7 +134,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100"
               />
@@ -120,7 +146,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
               <input
                 type="text"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100"
               />
@@ -130,7 +158,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
               <input
                 type="text"
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100"
               />
@@ -140,7 +170,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
               <input
                 type="text"
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, state: e.target.value })
+                }
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-lg disabled:bg-gray-100"
               />
@@ -158,7 +190,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
               <textarea
                 value={formData.description}
                 onChange={(e) =>
@@ -178,7 +212,9 @@ function ProfileSettings({ provider, providerId }: { provider: any; providerId: 
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
                   Cancel
                 </Button>
-                <Button className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  Save Changes
+                </Button>
               </>
             )}
           </div>
